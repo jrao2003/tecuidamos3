@@ -1,12 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    hello world
-    saludos
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="../static/styles/main.css">
+<script>
+    function start() {
+        const content = document.getElementById('content');
+        content.innerHTML = `
+            <button onclick="uploadDocument()">Subir Documento</button>
+            <button onclick="takePhoto()">Tomar Foto</button>
+        `;
+    }
+
+    function uploadDocument() {
+        alert('Subir Documento clicado');
+    }
+
+    function takePhoto() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Solicitar acceso a la cámara
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                // Crear un elemento de video para mostrar la cámara
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+
+                // Ajustar el ancho al 100% y el alto a la mitad de la página
+                video.style.width = '100%';
+                video.style.height = `${window.innerHeight / 2}px`; // La mitad de la altura de la ventana
+
+                const content = document.getElementById('content');
+                content.innerHTML = '<p>Tomando foto...</p>';
+                content.appendChild(video);
+                
+                // Opcional: un botón para tomar la foto
+                const captureButton = document.createElement('button');
+                captureButton.textContent = 'Capturar Foto';
+                content.appendChild(captureButton);
+                
+                captureButton.onclick = function () {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const photoDataUrl = canvas.toDataURL('image/png');
+                    
+                    // Detener el stream de la cámara después de tomar la foto
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    content.innerHTML = `
+                        <p>Foto tomada:</p>
+                        <img src="${photoDataUrl}" alt="Foto Capturada" style="width: 100%; max-width: 400px;">
+                    `;
+                };
+            })
+            .catch(function (error) {
+                alert('No se pudo acceder a la cámara: ' + error.message);
+            });
+    } else {
+        alert('Tu navegador no soporta el acceso a la cámara.');
+    }
+    }
+
+</script>
+<div id="content">
+    <p>Bienvenido a nuestra página. Aquí puedes realizar diferentes acciones.</p>
+    <button onclick="start()">Comenzar</button>
+</div>
+
+
+    {% endblock %}
