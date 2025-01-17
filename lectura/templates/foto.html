@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Aseguramos que el enlace dentro del botón no tenga el estilo por defecto (azul y subrayado) */
+    button a {
+        text-decoration: none;
+        color: white; /* Cambia a un color que prefieras */
+        font-size: 16px;
+    }
+
+    /* Estilos para el botón */
+    .back-button {
+        display: block; /* Hace que el botón se acomode debajo de la foto */
+        background-color: #5E239D; /* Puedes cambiar el color de fondo */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        margin-top: 20px; /* Espacio adicional debajo de la foto */
+        font-size: 16px;
+        cursor: pointer;
+        width: 200px;
+        text-align: center;
+    }
+
+    /* Cambio de color al pasar el mouse sobre el enlace */
+    .back-button a:hover {
+        background-color: #F1A208; /* Cambia el fondo al color de acento */
+        color: #240852; /* Cambia el texto al color principal */
+    }
+</style>
+
+<h1>Foto Subida</h1>
+
+{% if photo_url %}
+    <p>¡La foto fue subida con éxito!</p>
+    <img src="{{ photo_url }}" alt="Foto subida" style="max-width: 100%; height: auto;">
+{% else %}
+    <p>No se ha subido ninguna foto aún.</p>
+{% endif %}
+
+<!-- Botón de Volver al Inicio -->
+<button class="back-button">
+    <a href="/">Volver al inicio</a>
+</button>
+
+{% endblock %}

@@ -2,15 +2,17 @@
 {% load static %}
 
 {% block content %}
-<link rel="stylesheet" href="../static/styles/main.css">
 <script>
     function start() {
         const content = document.getElementById('content');
         content.innerHTML = `
-            <form id="uploadForm" method="post" enctype="multipart/form-data" action="/archivo" >
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="/archivo">
                 {% csrf_token %}
                 <button type="button" onclick="uploadDocument()">Subir Documento</button>
                 <input type="file" id="fileInput" name="file" style="display: none;" onchange="handleFileUpload(event)">
+            </form>
+            <form id="photoForm" method="post" enctype="multipart/form-data" action="/foto">
+                {% csrf_token %}
             </form>
             <button type="button" onclick="takePhoto()">Tomar Foto</button>
         `;
@@ -25,62 +27,102 @@
         const file = event.target.files[0];
         if (file) {
             alert(`Documento seleccionado: ${file.name}`);
-
-            // Envía automáticamente el formulario al seleccionar un archivo
             const uploadForm = document.getElementById('uploadForm');
             uploadForm.submit();
         }
     }
 
     function takePhoto() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Solicitar acceso a la cámara
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function (stream) {
-                // Crear un elemento de video para mostrar la cámara
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.autoplay = true;
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Solicitar acceso a la cámara
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.autoplay = true;
 
-                // Ajustar el ancho al 100% y el alto a la mitad de la página
-                video.style.width = '100%';
-                video.style.height = `${window.innerHeight / 2}px`; // La mitad de la altura de la ventana
+                    video.style.width = '100%';
+                    video.style.height = `${window.innerHeight / 2}px`;
 
-                const content = document.getElementById('content');
-                content.innerHTML = '<p>Tomando foto...</p>';
-                content.appendChild(video);
-                
-                // Opcional: un botón para tomar la foto
-                const captureButton = document.createElement('button');
-                captureButton.textContent = 'Capturar Foto';
-                content.appendChild(captureButton);
-                
-                captureButton.onclick = function () {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const context = canvas.getContext('2d');
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const photoDataUrl = canvas.toDataURL('image/png');
-                    
-                    // Detener el stream de la cámara después de tomar la foto
-                    stream.getTracks().forEach(track => track.stop());
-                    
-                    content.innerHTML = `
-                        <p>Foto tomada:</p>
-                        <img src="${photoDataUrl}" alt="Foto Capturada" style="width: 100%; max-width: 400px;">
-                    `;
-                };
-            })
-            .catch(function (error) {
-                alert('No se pudo acceder a la cámara: ' + error.message);
-            });
-    } else {
-        alert('Tu navegador no soporta el acceso a la cámara.');
+                    const content = document.getElementById('content');
+                    content.innerHTML = '<p>Tomando foto...</p>';
+                    content.appendChild(video);
+
+                    const captureButton = document.createElement('button');
+                    captureButton.textContent = 'Capturar Foto';
+                    content.appendChild(captureButton);
+
+                    captureButton.onclick = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const context = canvas.getContext('2d');
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const photoDataUrl = canvas.toDataURL('image/png'); // Obtener la foto en formato base64
+
+                        // Detener el stream de la cámara después de tomar la foto
+                        stream.getTracks().forEach(track => track.stop());
+
+                        // Crear un archivo desde la imagen capturada
+                        const blob = dataURLToBlob(photoDataUrl);
+                        const formData = new FormData();
+                        formData.append('photo', blob, 'captured_photo.png'); // Nombre del archivo enviado al servidor
+
+                        // Enviar la foto al servidor
+                        fetch('/foto', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRFToken': getCsrfToken() // Obtener el token CSRF
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                // Redirigir a foto.html cuando el servidor confirme éxito
+                                window.location.href = '/foto';
+                            } else {
+                                alert('Hubo un error al enviar la foto.');
+                            }
+                        })
+                        .catch(error => {
+                            alert('Error al enviar la foto: ' + error.message);
+                        });
+                    };
+                })
+                .catch(function (error) {
+                    alert('No se pudo acceder a la cámara: ' + error.message);
+                });
+        } else {
+            alert('Tu navegador no soporta el acceso a la cámara.');
+        }
     }
+
+    // Convertir Base64 a Blob
+    function dataURLToBlob(dataURL) {
+        const parts = dataURL.split(',');
+        const mime = parts[0].match(/:(.*?);/)[1];
+        const bstr = atob(parts[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
     }
 
+    // Obtener token CSRF de las cookies
+    function getCsrfToken() {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                return cookie.substring('csrftoken='.length, cookie.length);
+            }
+        }
+        return null;
+    }
 </script>
+
 <div id="content">
     <p>Bienvenido a nuestra página. Aquí puedes realizar diferentes acciones.</p>
     <button onclick="start()">Comenzar</button>
