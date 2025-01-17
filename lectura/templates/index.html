@@ -7,13 +7,29 @@
     function start() {
         const content = document.getElementById('content');
         content.innerHTML = `
-            <button onclick="uploadDocument()">Subir Documento</button>
-            <button onclick="takePhoto()">Tomar Foto</button>
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="/archivo" >
+                {% csrf_token %}
+                <button type="button" onclick="uploadDocument()">Subir Documento</button>
+                <input type="file" id="fileInput" name="file" style="display: none;" onchange="handleFileUpload(event)">
+            </form>
+            <button type="button" onclick="takePhoto()">Tomar Foto</button>
         `;
     }
 
     function uploadDocument() {
-        alert('Subir Documento clicado');
+        const fileInput = document.getElementById('fileInput');
+        fileInput.click();
+    }
+
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            alert(`Documento seleccionado: ${file.name}`);
+
+            // Envía automáticamente el formulario al seleccionar un archivo
+            const uploadForm = document.getElementById('uploadForm');
+            uploadForm.submit();
+        }
     }
 
     function takePhoto() {
