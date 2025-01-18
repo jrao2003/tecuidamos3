@@ -29,6 +29,57 @@
         background-color: #F1A208; /* Cambia el fondo al color de acento */
         color: #240852; /* Cambia el texto al color principal */
     }
+
+    .download-btn {
+        color: #FFFFFF; /* Color del texto */
+        background-color: #F1A208; /* Color de fondo del botón */
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .download-btn:hover {
+        background-color: #240852; /* Color de fondo al pasar el cursor */
+        color: #F1A208; /* Color del texto al pasar el cursor */
+    }
+
+    .download-btn:active {
+        background-color: #5E239D; /* Color de fondo al presionar */
+        color: #FFFFFF; /* Color del texto al presionar */
+    }
+
+    /* Reproductor de audio */
+    audio {
+        outline: none;
+        width: 100%; /* Ajusta al ancho del contenedor */
+        max-width: 300px; /* Máximo ancho */
+        margin-top: 10px;
+        border-radius: 8px;
+        background-color: #5E239D; /* Fondo personalizado */
+        padding: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    audio::-webkit-media-controls-panel {
+        background-color: #240852; /* Fondo del panel de controles */
+        color: #f1f1f1; /* Color del texto */
+        border-radius: 8px;
+    }
+
+    audio::-webkit-media-controls-play-button,
+    audio::-webkit-media-controls-timeline,
+    audio::-webkit-media-controls-current-time-display,
+    audio::-webkit-media-controls-time-remaining-display {
+        color: #f1f1f1; /* Color de los íconos y texto en controles */
+    }
+
+
 </style>
 
 <h1>Foto Subida</h1>
@@ -39,6 +90,18 @@
 {% else %}
     <p>No se ha subido ninguna foto aún.</p>
 {% endif %}
+
+<!-- Controles de audio -->
+<div class="audio-controls">
+    <!-- Reproductor de audio -->
+    <audio controls>
+        <source src="{% static 'audio/your-audio-file.mp3' %}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Botón de descarga -->
+    <a href="{% static 'audio/your-audio-file.mp3' %}" download class="download-btn">Descargar audio</a>
+</div>
 
 <!-- Botón de Volver al Inicio -->
 <button class="back-button">

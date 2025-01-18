@@ -17,8 +17,12 @@ def cargar_archivo(request):
     if request.method == 'POST' and request.FILES['file']:
         archivo_pdf = request.FILES['file']
         # Guardar el archivo en la carpeta local
+        file_path = os.path.join(settings.MEDIA_ROOT, 'lectura.pdf')
+        if os.path.exists(file_path):
+            os.remove(file_path)
         fs = FileSystemStorage(location=settings.MEDIA_ROOT)
-        filename = fs.save(archivo_pdf.name, archivo_pdf)
+        filename = fs.save('lectura.pdf', archivo_pdf)
+        print(filename)
         file_url = os.path.join(settings.MEDIA_URL, filename)
         print(file_url)
         return render(request, 'leer.html', {'file_url': file_url})
