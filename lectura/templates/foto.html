@@ -3,107 +3,115 @@
 
 {% block content %}
 <style>
-    /* Aseguramos que el enlace dentro del botón no tenga el estilo por defecto (azul y subrayado) */
-    button a {
-        text-decoration: none;
-        color: white; /* Cambia a un color que prefieras */
-        font-size: 16px;
-    }
-
-    /* Estilos para el botón */
-    .back-button {
-        display: block; /* Hace que el botón se acomode debajo de la foto */
-        background-color: #5E239D; /* Puedes cambiar el color de fondo */
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        margin-top: 20px; /* Espacio adicional debajo de la foto */
-        font-size: 16px;
-        cursor: pointer;
-        width: 200px;
+    /* Estilos para el encabezado */
+    h1 {
         text-align: center;
+        font-size: 2rem;
+        color: #EAEAEA; /* Texto claro */
+        margin-bottom: 20px;
     }
 
-    /* Cambio de color al pasar el mouse sobre el enlace */
-    .back-button a:hover {
-        background-color: #F1A208; /* Cambia el fondo al color de acento */
-        color: #240852; /* Cambia el texto al color principal */
+    /* Contenedor principal */
+    #content {
+        text-align: center;
+        margin: 20px auto;
     }
 
-    .download-btn {
-        color: #FFFFFF; /* Color del texto */
-        background-color: #F1A208; /* Color de fondo del botón */
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 10px;
-        text-decoration: none;
-        border-radius: 5px;
+    /* Botón de Volver al Inicio */
+    .back-button {
         display: inline-block;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #FFFFFF; /* Texto blanco */
+        background-color: #2A9D8F; /* Verde vibrante */
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .back-button:hover {
+        background-color: #21867A; /* Verde oscuro */
+        transform: scale(1.05); /* Efecto de agrandamiento */
+    }
+
+    .back-button:active {
+        background-color: #1B5F5B; /* Verde más oscuro */
+    }
+
+    /* Botón de Descargar Audio */
+    .download-btn {
+        display: inline-block;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #FFFFFF; /* Texto blanco */
+        background-color: #F4A261; /* Naranja vibrante */
+        border: none;
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     .download-btn:hover {
-        background-color: #240852; /* Color de fondo al pasar el cursor */
-        color: #F1A208; /* Color del texto al pasar el cursor */
+        background-color: #E76F51; /* Rojo suave */
+        transform: scale(1.05); /* Efecto de agrandamiento */
     }
 
     .download-btn:active {
-        background-color: #5E239D; /* Color de fondo al presionar */
-        color: #FFFFFF; /* Color del texto al presionar */
+        background-color: #D62828; /* Rojo más oscuro */
     }
 
-    /* Reproductor de audio */
+    /* Reproductor de Audio */
     audio {
         outline: none;
-        width: 100%; /* Ajusta al ancho del contenedor */
-        max-width: 300px; /* Máximo ancho */
-        margin-top: 10px;
-        border-radius: 8px;
-        background-color: #5E239D; /* Fondo personalizado */
-        padding: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 400px;
+        margin: 20px auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
 
     audio::-webkit-media-controls-panel {
-        background-color: #240852; /* Fondo del panel de controles */
-        color: #f1f1f1; /* Color del texto */
-        border-radius: 8px;
+        background-color: #1A1A2E; /* Fondo oscuro */
+        color: #EAEAEA; /* Texto claro */
+        border-radius: 10px;
     }
 
     audio::-webkit-media-controls-play-button,
     audio::-webkit-media-controls-timeline,
     audio::-webkit-media-controls-current-time-display,
     audio::-webkit-media-controls-time-remaining-display {
-        color: #f1f1f1; /* Color de los íconos y texto en controles */
+        color: #EAEAEA; /* Color de los íconos y texto */
     }
-
-
 </style>
 
-<h1>Foto Subida</h1>
+<div id="content">
+    <h1>Foto Subida</h1>
 
-{% if photo_url %}
-    <p>¡La foto fue subida con éxito!</p>
-    <img src="{{ photo_url }}" alt="Foto subida" style="max-width: 100%; height: auto;">
-    
+    {% if photo_url %}
+        <p>¡La foto fue subida con éxito!</p>
+        <img src="{{ photo_url }}" alt="Foto subida" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
+        
+        <!-- Reproductor de audio -->
+        <h2 style="color: #EAEAEA; margin-top: 20px;">Audio generado:</h2>
+        <audio controls>
+            <source src="{{ audio_url }}" type="audio/mpeg">
+            Tu navegador no soporta el reproductor de audio.
+        </audio>
+        <br>
+        <a href="{{ audio_url }}" download class="download-btn">Descargar audio</a>
+    {% else %}
+        <p style="color: #EAEAEA;">No se ha subido ninguna foto aún.</p>
+    {% endif %}
 
-    <!-- Reproductor de audio -->
-    <h2>Audio generado:</h2>
-    <audio controls>
-        <source src="{{ audio_url }}" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    <br>
-    <a href="{{ audio_url }}" download class="download-btn">Descargar audio</a>
-{% else %}
-    <p>No se ha subido ninguna foto aún.</p>
-{% endif %}
-
-<!-- Botón de Volver al Inicio -->
-<button class="back-button">
-    <a href="/">Volver al inicio</a>
-</button>
-
+    <!-- Botón de Volver al Inicio -->
+    <a href="/" class="back-button">Volver al inicio</a>
+</div>
 {% endblock %}
