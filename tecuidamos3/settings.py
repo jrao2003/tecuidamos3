@@ -16,7 +16,8 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+# settings.py
+ELEVENLABS_API_KEY = 'sk_155e9ab0332731c88f417366e77bd0b3b8c21d61b8b52600'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/

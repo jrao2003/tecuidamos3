@@ -91,12 +91,35 @@
 </style>
 
 <div id="content">
-    <!-- Contenedor del PDF -->
+    {% if mensaje %}
+        <p style="color: {% if audio_url %} #2A9D8F {% else %} #E94560 {% endif %}; 
+                  font-weight: bold; margin-bottom: 20px;">
+            {{ mensaje }}
+        </p>
+    {% endif %}
+
+    <!-- Contenedor del PDF (solo para archivos PDF) -->
+    {% if file_extension == '.pdf' %}
     <div class="embed-container">
         <embed src="{{ file_url }}" type="application/pdf">
     </div>
+    {% endif %}
 
-    <!-- Controles de audio -->
+    <!-- Mostrar imagen si es un archivo de imagen -->
+    {% if file_extension in '.jpg,.png,.jpeg' %}
+    <img src="{{ file_url }}" alt="Imagen subida" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
+    {% endif %}
+
+    <!-- Mostrar contenido del documento si está disponible -->
+    {% if contenido and not audio_url %}
+    <div style="background-color: #1A1A2E; padding: 20px; border-radius: 10px; margin: 20px auto; max-width: 800px;">
+        <h3 style="color: #EAEAEA;">Contenido del documento:</h3>
+        <p style="color: #EAEAEA; white-space: pre-wrap;">{{ contenido }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Controles de audio (solo si hay audio) -->
+    {% if audio_url %}
     <div class="audio-controls">
         <!-- Reproductor de audio -->
         <audio controls>
@@ -107,6 +130,7 @@
         <!-- Botón de descarga -->
         <a href="{{ audio_url }}" download class="download-btn">Descargar audio</a>
     </div>
+    {% endif %}
 
     <!-- Botón de Volver al Inicio -->
     <a href="/" class="back-button">Volver al inicio</a>

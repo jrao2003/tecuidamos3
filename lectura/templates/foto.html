@@ -95,20 +95,26 @@
 <div id="content">
     <h1>Foto Subida</h1>
 
+    {% if mensaje %}
+        <p style="color: {% if audio_url %} #2A9D8F {% else %} #E94560 {% endif %}; 
+                  font-weight: bold; margin-bottom: 20px;">
+            {{ mensaje }}
+        </p>
+    {% endif %}
+
     {% if photo_url %}
-        <p>¡La foto fue subida con éxito!</p>
         <img src="{{ photo_url }}" alt="Foto subida" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
         
-        <!-- Reproductor de audio -->
-        <h2 style="color: #EAEAEA; margin-top: 20px;">Audio generado:</h2>
-        <audio controls>
-            <source src="{{ audio_url }}" type="audio/mpeg">
-            Tu navegador no soporta el reproductor de audio.
-        </audio>
-        <br>
-        <a href="{{ audio_url }}" download class="download-btn">Descargar audio</a>
-    {% else %}
-        <p style="color: #EAEAEA;">No se ha subido ninguna foto aún.</p>
+        {% if audio_url %}
+            <!-- Reproductor de audio -->
+            <h2 style="color: #EAEAEA; margin-top: 20px;">Audio generado:</h2>
+            <audio controls>
+                <source src="{{ audio_url }}" type="audio/mpeg">
+                Tu navegador no soporta el reproductor de audio.
+            </audio>
+            <br>
+            <a href="{{ audio_url }}" download class="download-btn">Descargar audio</a>
+        {% endif %}
     {% endif %}
 
     <!-- Botón de Volver al Inicio -->
